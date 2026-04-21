@@ -62,7 +62,10 @@ Your task is to take the user's rough descriptions and convert them into incredi
 CRITICAL RULES:
 1. Form: valid JSON exact format {"scenePrompt": "...", "visualPrompt": "...", "combinedPrompt": "..."}. NO markdown formatting around JSON.
 2. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
-3. STYLE: Use cinematic terminology.
+3. STYLE & CINEMATOGRAPHY (CRITICAL): 
+   - DO NOT just literally translate the input into boring prose. 
+   - You MUST inject highly dynamic cinematic terminology (e.g., extreme close-up, dynamic pan, slow zoom, Dutch angle) and amplify the visual impact (cinematic lighting, breathtaking intensity, masterpiece, 8k resolution).
+   - Ensure the original camera movements (运镜) and visual tension/impact (冲击感) are strictly preserved and beautifully enhanced in the English prompt.
 4. CONTEXT ALIGNMENT (CRITICAL): 
    - Art style context: ${outline}
    - If memory context is provided, you MUST ensure that the FIRST FRAME of this scene connects seamlessly with the LAST FRAME of the previous scene.
