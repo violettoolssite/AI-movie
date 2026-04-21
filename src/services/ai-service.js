@@ -18,8 +18,9 @@ Each node must have a 'type' and 'text'.
 Types allowed:
 - 'scene_element': Describes the environment, background, location, or time of day.
 - 'character_action': Describes what a character does, how they look, or their expression.
+- 'camera_movement': Camera instructions like 'Zoom in', 'Slow Pan', 'Low Angle', 'Tracking shot'.
 - 'narration': Voiceovers, character inner monologues, or dialogue meant to be text.
-- 'cut_instruction': Editing notes like 'Cut to', 'Zoom in', or technical directions.
+- 'cut_instruction': Pure editing notes like 'Cut to black', 'Fade out', 'Transition'.
 
 CRITICAL: Return ONLY a valid JSON Array. No markdown formatting (\`\`\`json) outside the array. No chat.
 Example Output format:
@@ -57,20 +58,21 @@ Example Output format:
     // 阶段2：生成画面提示词
     async generatePrompts(outline, sceneText, visualText, memoryContext) {
         const systemPrompt = `You are a professional AI prompt engineer specializing in cinematic storyboards, comic panels, and manga art.
-Your task is to take the user's rough descriptions and convert them into incredibly detailed, high-quality English prompts for AI image generators (like Midjourney).
+Your task is to take the user's rough descriptions and convert them into incredibly detailed, high-quality prompts for AI image/video generators.
 
 CRITICAL RULES:
 1. Form: valid JSON exact format {"scenePrompt": "...", "visualPrompt": "...", "combinedPrompt": "..."}. NO markdown formatting around JSON.
-2. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
-3. STYLE & CINEMATOGRAPHY (CRITICAL): 
+2. OUTPUT LANGUAGE (CRITICAL): You MUST auto-detect the language of the source script and ensure your generated prompts are written in that EXACT same language (e.g., if the user wrote Chinese scripts, you MUST output Chinese prompts. If English, output English prompts).
+3. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
+4. STYLE & CINEMATOGRAPHY (CRITICAL): 
    - DO NOT just literally translate the input into boring prose. 
    - You MUST inject highly dynamic cinematic terminology (e.g., extreme close-up, dynamic pan, slow zoom, Dutch angle) and amplify the visual impact (cinematic lighting, breathtaking intensity, masterpiece, 8k resolution).
-   - Ensure the original camera movements (运镜) and visual tension/impact (冲击感) are strictly preserved and beautifully enhanced in the English prompt.
-4. CONTEXT ALIGNMENT (CRITICAL): 
+   - Ensure the original camera movements (运镜) and visual tension/impact (冲击感) are strictly preserved and beautifully enhanced in the final output prompt language.
+5. CONTEXT ALIGNMENT (CRITICAL): 
    - Art style context: ${outline}
    - If memory context is provided, you MUST ensure that the FIRST FRAME of this scene connects seamlessly with the LAST FRAME of the previous scene.
    - Example Constraint Wordings to append: "seamless continuity from previous shot, exactly same location, characters in identical outfits and positions, consistent with previous scene". Do NOT allow geographic or continuity jumps.
-5. DIALOGUE & LIP-SYNC (CRITICAL):
+6. DIALOGUE & LIP-SYNC (CRITICAL):
    - Auto-detect the original language of the script's dialogue (e.g., Chinese, English, Japanese).
    - If characters speak, describe them as "fluently speaking [Original Language], expressive mouth open matching [Original Language] pronunciation".
    - Do NOT translate dialogue to another language. The dialogue text must remain exactly in the origin language. 
