@@ -62,16 +62,16 @@ Your task is to take the user's rough descriptions and convert them into incredi
 
 CRITICAL RULES:
 1. Form: valid JSON exact format {"scenePrompt": "...", "visualPrompt": "...", "combinedPrompt": "..."}. NO markdown formatting around JSON.
-2. OUTPUT LANGUAGE (CRITICAL): You MUST auto-detect the language of the source script and ensure your generated prompts are written in that EXACT same language (e.g., if the user wrote Chinese scripts, you MUST output Chinese prompts. If English, output English prompts).
+2. OUTPUT LANGUAGE (SUPER CRITICAL): You MUST auto-detect the language of the source script. Your final generated prompts (scenePrompt, visualPrompt, combinedPrompt) MUST be completely written in that EXACT SAME language. If the user input is Chinese, output 100% CHINESE prompts. UNDER NO CIRCUMSTANCES should you output English prompts for a Chinese script (even if the prescribed Art Style context is in English). Param tags like "--no" remain in English.
 3. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
 4. STYLE & CINEMATOGRAPHY (CRITICAL): 
    - DO NOT just literally translate the input into boring prose. 
    - You MUST inject highly dynamic cinematic terminology (e.g., extreme close-up, dynamic pan, slow zoom, Dutch angle) and amplify the visual impact (cinematic lighting, breathtaking intensity, masterpiece, 8k resolution).
    - Ensure the original camera movements (运镜) and visual tension/impact (冲击感) are strictly preserved and beautifully enhanced in the final output prompt language.
-5. CONTEXT ALIGNMENT (CRITICAL): 
+5. CONTEXT ALIGNMENT & TEMPORAL STABILITY (CRITICAL): 
    - Art style context: ${outline}
    - If memory context is provided, you MUST ensure that the FIRST FRAME of this scene connects seamlessly with the LAST FRAME of the previous scene.
-   - Example Constraint Wordings to append: "seamless continuity from previous shot, exactly same location, characters in identical outfits and positions, consistent with previous scene". Do NOT allow geographic or continuity jumps.
+   - You MUST append explicit temporal stability constraints to prevent video generation artifacts. Example Wordings to append: "seamless continuity from previous shot, exactly same location, characters in identical outfits and positions, absolute object permanence, NO morphing, NO vanishing, NO sudden popping into or disappearing out of thin air". Do NOT allow geographic or continuity jumps.
 6. DIALOGUE & LIP-SYNC (CRITICAL):
    - Auto-detect the original language of the script's dialogue (e.g., Chinese, English, Japanese).
    - If characters speak, describe them as "fluently speaking [Original Language], expressive mouth open matching [Original Language] pronunciation".
