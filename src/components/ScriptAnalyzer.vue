@@ -31,7 +31,7 @@
           <span class="legend-valid">■ 有效转换词</span>
           <span class="legend-invalid">■ 旁白/剪辑(已隔离/将被抛弃)</span>
         </div>
-        <button class="btn-push" @click="pushToStudio">同步可用上下文至工作室 ➔</button>
+        <button class="btn-push" @click="pushToStudio">➔ 一键搬运至右侧并生成英文提示词</button>
       </div>
     </div>
   </div>
@@ -67,8 +67,13 @@ const pushToStudio = () => {
     const scenes = store.analyzedNodes.filter(n => n.type === 'scene_element').map(n => n.text).join(' ');
     const visuals = store.analyzedNodes.filter(n => n.type === 'character_action').map(n => n.text).join(' ');
     
-    store.activeSceneText = scenes || '未提取到由于场景要素...';
-    store.activeVisualText = visuals || '未提取到画面/角色要素...';
+    store.activeSceneText = scenes || '未提取到场景要素...';
+    store.activeVisualText = visuals || '未提取到画面要素...';
+
+    // 自动触发右侧生成
+    setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('auto-generate'));
+    }, 100);
 }
 </script>
 
@@ -148,13 +153,17 @@ textarea:focus { outline: none; border-color: var(--brand-color); }
 .legend-invalid { color: var(--danger-text); }
 
 .btn-push {
-    align-self: flex-end;
-    background: transparent;
-    border: 1px solid var(--border-color);
-    padding: 8px 16px;
+    align-self: stretch;
+    background: var(--brand-color);
+    border: none;
+    padding: 12px 16px;
     border-radius: 6px;
-    color: var(--brand-color);
-    font-size: 0.85rem;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
 }
-.btn-push:hover { background: var(--bg-input); }
+.btn-push:hover { background: var(--accent-hover); }
 </style>

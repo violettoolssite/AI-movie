@@ -1,38 +1,46 @@
 <template>
   <div class="studio-wrapper">
     <div class="studio-grid">
+      <!-- 场景 -->
       <div class="panel">
-        <div class="panel-header">
-          <h2>SCENE (场景描述)</h2>
-        </div>
+        <div class="panel-header"><h2>SCENE (场景描述)</h2></div>
         <div class="panel-body">
           <textarea v-model="store.activeSceneText" placeholder="等待从解析区同步，或手动输入..." :disabled="isGenerating"></textarea>
           <div class="result-box">
             <div class="result-header">
-              <h3>OPTIMIZED SCENE PROMPT</h3>
+              <h3>OPTIMIZED SCENE</h3>
               <button class="btn-copy" @click="copyToClipboard(scenePromptOutput, $event)">COPY</button>
             </div>
-            <div class="output-content" :class="{'processing': isGenerating}">
-              {{ scenePromptOutput }}
-            </div>
+            <div class="output-content" :class="{'processing': isGenerating}">{{ scenePromptOutput }}</div>
           </div>
         </div>
       </div>
 
+      <!-- 画面 -->
       <div class="panel">
-        <div class="panel-header">
-          <h2>VISUAL (画面描述)</h2>
-        </div>
+        <div class="panel-header"><h2>VISUAL (画面描述)</h2></div>
         <div class="panel-body">
           <textarea v-model="store.activeVisualText" placeholder="等待从解析区同步，或手动输入..." :disabled="isGenerating"></textarea>
           <div class="result-box">
             <div class="result-header">
-              <h3>OPTIMIZED VISUAL PROMPT</h3>
+              <h3>OPTIMIZED VISUAL</h3>
               <button class="btn-copy" @click="copyToClipboard(visualPromptOutput, $event)">COPY</button>
             </div>
-            <div class="output-content" :class="{'processing': isGenerating}">
-              {{ visualPromptOutput }}
+            <div class="output-content" :class="{'processing': isGenerating}">{{ visualPromptOutput }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 合并版 -->
+      <div class="panel combined-panel">
+        <div class="panel-header"><h2>COMBINED (综合版生成提示词)</h2></div>
+        <div class="panel-body">
+          <div class="result-box combined-result-box">
+            <div class="result-header">
+              <h3>ALL-IN-ONE PROMPT (含对白参数)</h3>
+              <button class="btn-copy" @click="copyToClipboard(combinedPromptOutput, $event)">COPY</button>
             </div>
+            <div class="output-content" :class="{'processing': isGenerating}">{{ combinedPromptOutput }}</div>
           </div>
         </div>
       </div>
@@ -55,12 +63,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { store } from '../store.js';
 import { aiService } from '../services/ai-service.js';
 
 const scenePromptOutput = ref('STANDBY...');
 const visualPromptOutput = ref('STANDBY...');
+const combinedPromptOutput = ref('STANDBY...');
 const isGenerating = ref(false);
 
 const handleGenerate = async () => {
@@ -72,6 +81,7 @@ const handleGenerate = async () => {
     isGenerating.value = true;
     scenePromptOutput.value = 'PROCESSING SCENE DATA...';
     visualPromptOutput.value = 'PROCESSING VISUAL DATA...';
+    combinedPromptOutput.value = 'PROCESSING COMBINED DATA...';
 
     try {
         const result = await aiService.generatePrompts(
@@ -82,9 +92,11 @@ const handleGenerate = async () => {
         );
         scenePromptOutput.value = result.scenePrompt;
         visualPromptOutput.value = result.visualPrompt;
+        combinedPromptOutput.value = result.combinedPrompt;
     } catch (e) {
         scenePromptOutput.value = '[ERROR] ' + e.message;
         visualPromptOutput.value = '[ERROR] ' + e.message;
+        combinedPromptOutput.value = '[ERROR] ' + e.message;
     } finally {
         isGenerating.value = false;
     }
@@ -98,6 +110,7 @@ const handleNextFrame = () => {
     store.activeVisualText = '';
     scenePromptOutput.value = 'STANDBY...';
     visualPromptOutput.value = 'STANDBY...';
+    combinedPromptOutput.value = 'STANDBY...';
 }
 
 const copyToClipboard = (text, e) => {
@@ -109,6 +122,14 @@ const copyToClipboard = (text, e) => {
         setTimeout(() => btn.innerText = oText, 1500);
     });
 }
+
+onMounted(() => {
+    window.addEventListener('auto-generate', handleGenerate);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('auto-generate', handleGenerate);
+});
 </script>
 
 <style scoped>
@@ -120,7 +141,7 @@ const copyToClipboard = (text, e) => {
 .studio-grid {
     flex: 1;
     display: flex;
-    gap: 24px;
+    gap: 16px;
     padding: 24px;
     background-color: var(--bg-base);
     overflow: hidden;
@@ -128,6 +149,7 @@ const copyToClipboard = (text, e) => {
 
 .panel {
     flex: 1;
+    min-width: 0;
     background-color: var(--bg-surface);
     display: flex;
     flex-direction: column;
@@ -137,14 +159,21 @@ const copyToClipboard = (text, e) => {
     overflow: hidden;
 }
 
+.combined-panel {
+    flex: 1.2;
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(37,99,235,0.02) 100%);
+    border-color: rgba(37,99,235,0.2);
+}
+
 .panel-header {
-    padding: 20px 24px;
+    padding: 16px 20px;
     border-bottom: 1px solid var(--bg-base);
     background-color: var(--bg-surface);
 }
+.combined-panel .panel-header h2 { color: var(--brand-color); }
 
 .panel-header h2 {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--text-primary);
 }
 
@@ -152,21 +181,21 @@ const copyToClipboard = (text, e) => {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    gap: 24px;
+    padding: 20px;
+    gap: 16px;
     overflow-y: auto;
 }
 
 textarea {
     width: 100%;
-    height: 120px;
+    height: 90px;
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
-    padding: 16px;
+    padding: 12px;
     border-radius: 8px;
     resize: none;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     line-height: 1.6;
 }
 textarea:focus { outline: none; border-color: var(--brand-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
@@ -180,31 +209,33 @@ textarea:focus { outline: none; border-color: var(--brand-color); box-shadow: 0 
     background-color: var(--bg-input);
     overflow: hidden;
 }
+.combined-result-box { height: 100%; }
 
 .result-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--bg-surface);
 }
 
-.result-header h3 { font-size: 0.8rem; color: var(--text-primary); }
+.result-header h3 { font-size: 0.75rem; color: var(--text-primary); }
+.combined-panel .result-header h3 { color: var(--brand-color); font-weight: 700; }
 
 .btn-copy {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
-    padding: 6px 12px;
+    padding: 4px 10px;
     border-radius: 6px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
 }
 
 .output-content {
     padding: 16px;
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.6;
     color: var(--text-muted);
     overflow-wrap: break-word;
@@ -235,6 +266,7 @@ textarea:focus { outline: none; border-color: var(--brand-color); box-shadow: 0 
 .action-bar { display: flex; gap: 16px; }
 .btn-primary, .btn-secondary { padding: 10px 20px; border: none; border-radius: 8px; font-size: 0.9rem; }
 .btn-primary { background-color: var(--accent); color: #ffffff; }
+.btn-primary:active { transform: translateY(1px); }
 .btn-secondary { background-color: #ffffff; border: 1px solid var(--border-color); }
-.btn-primary:disabled, .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary:disabled, .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 </style>

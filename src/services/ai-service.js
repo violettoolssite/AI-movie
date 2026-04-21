@@ -48,8 +48,10 @@ Example Output format:
         if (!response.ok) throw new Error("API call failed during script analysis.");
         
         const data = await response.json();
-        const content = data.choices[0].message.content.replace(/```json/g, '').replace(/```/g, '').trim();
-        return JSON.parse(content);
+        const content = data.choices[0].message.content;
+        const match = content.match(/\[[\s\S]*\]/);
+        if (!match) throw new Error("模型返回的并不是标准的 JSON格式。原文输出：" + content);
+        return JSON.parse(match[0]);
     },
 
     // 阶段2：生成画面提示词
@@ -58,13 +60,19 @@ Example Output format:
 Your task is to take the user's rough descriptions and convert them into incredibly detailed, high-quality English prompts for AI image generators (like Midjourney).
 
 CRITICAL RULES:
-1. Form: valid JSON exact format {"scenePrompt": "...", "visualPrompt": "..."}. NO markdown formatting around JSON.
+1. Form: valid JSON exact format {"scenePrompt": "...", "visualPrompt": "...", "combinedPrompt": "..."}. NO markdown formatting around JSON.
 2. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
 3. STYLE: Use cinematic terminology.
 4. CONTEXT ALIGNMENT (CRITICAL): 
    - Art style context: ${outline}
    - If memory context is provided, you MUST ensure that the FIRST FRAME of this scene connects seamlessly with the LAST FRAME of the previous scene.
-   - Example Constraint Wordings to append: "seamless continuity from previous shot, exactly same location, characters in identical outfits and positions, consistent with previous scene". Do NOT allow geographic or continuity jumps.`;
+   - Example Constraint Wordings to append: "seamless continuity from previous shot, exactly same location, characters in identical outfits and positions, consistent with previous scene". Do NOT allow geographic or continuity jumps.
+5. DIALOGUE & LIP-SYNC (CRITICAL):
+   - Auto-detect the original language of the script's dialogue (e.g., Chinese, English, Japanese).
+   - If characters speak, describe them as "fluently speaking [Original Language], expressive mouth open matching [Original Language] pronunciation".
+   - Do NOT translate dialogue to another language. The dialogue text must remain exactly in the origin language. 
+   - You MUST ensure NO subtitles are rendered ("no subtitles, no text on screen").
+   - In combinedPrompt, append the exact original script dialogue at the very end in brackets like: [Script Dialog Reference: "Original Dialogue Text matching the script"] so the user can use it for AI lip-sync generation.`;
 
         let userContent = `Convert to optimized prompts.\n`;
         if (memoryContext) {
@@ -90,12 +98,16 @@ CRITICAL RULES:
 
         if (!response.ok) throw new Error("API call failed during prompt generation.");
         const data = await response.json();
-        const content = data.choices[0].message.content.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(content);
+        const content = data.choices[0].message.content;
+        const match = content.match(/\{[\s\S]*\}/);
+        if(!match) throw new Error("模型无法组装 JSON 格式。返回原文：" + content);
+
+        const parsed = JSON.parse(match[0]);
         
         return {
-            scenePrompt: parsed.scenePrompt.includes('--no text') ? parsed.scenePrompt : parsed.scenePrompt + ` ${NO_TEXT_CONSTRAINT}`,
-            visualPrompt: parsed.visualPrompt.includes('--no text') ? parsed.visualPrompt : parsed.visualPrompt + ` ${NO_TEXT_CONSTRAINT}`
+            scenePrompt: parsed.scenePrompt ? (parsed.scenePrompt.includes('--no text') ? parsed.scenePrompt : parsed.scenePrompt + ` ${NO_TEXT_CONSTRAINT}`) : '',
+            visualPrompt: parsed.visualPrompt ? (parsed.visualPrompt.includes('--no text') ? parsed.visualPrompt : parsed.visualPrompt + ` ${NO_TEXT_CONSTRAINT}`) : '',
+            combinedPrompt: parsed.combinedPrompt ? (parsed.combinedPrompt.includes('--no text') ? parsed.combinedPrompt : parsed.combinedPrompt + ` ${NO_TEXT_CONSTRAINT}`) : ''
         };
     }
 };
