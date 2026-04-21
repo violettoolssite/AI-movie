@@ -19,7 +19,8 @@ Types allowed:
 - 'scene_element': Describes the environment, background, location, or time of day.
 - 'character_action': Describes what a character does, how they look, or their expression.
 - 'camera_movement': Camera instructions like 'Zoom in', 'Slow Pan', 'Low Angle', 'Tracking shot'.
-- 'narration': Voiceovers, character inner monologues, or dialogue meant to be text.
+- 'dialogue': Spoken words and lines said out loud by characters on screen.
+- 'narration': Voiceovers or character inner monologues (invisible thoughts).
 - 'cut_instruction': Pure editing notes like 'Cut to black', 'Fade out', 'Transition'.
 
 CRITICAL: Return ONLY a valid JSON Array. No markdown formatting (\`\`\`json) outside the array. No chat.
@@ -28,6 +29,7 @@ Example Output format:
   { "type": "scene_element", "text": "Inside an abandoned warehouse, dust moats float in the sunlight." },
   { "type": "narration", "text": "(Voiceover: I never thought it would end like this...)" },
   { "type": "character_action", "text": "John drops his gun, his face dripping with sweat, looking terrified." },
+  { "type": "dialogue", "text": "John yells: 'We are trapped!'" },
   { "type": "cut_instruction", "text": "[Camera pans out to a wide shot]" }
 ]`;
 
