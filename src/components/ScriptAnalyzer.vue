@@ -31,7 +31,7 @@
           <span class="legend-valid">■ 有效转换词</span>
           <span class="legend-invalid">■ 旁白/剪辑(已隔离/将被抛弃)</span>
         </div>
-        <button class="btn-push" @click="pushToStudio">➔ 一键搬运至右侧并生成英文提示词</button>
+        <button class="btn-push" @click="pushToStudio">➔ 一键搬运至右侧并自动生成顶级提示词</button>
       </div>
     </div>
   </div>
@@ -59,12 +59,13 @@ const handleAnalyze = async () => {
 
 const getNodeClass = (type) => {
     if (type === 'narration' || type === 'cut_instruction') return 'node-invalid';
+    if (type === 'camera_movement') return 'node-camera';
     return 'node-valid';
 }
 
 const pushToStudio = () => {
     // 组装纯净版
-    const scenes = store.analyzedNodes.filter(n => n.type === 'scene_element').map(n => n.text).join(' ');
+    const scenes = store.analyzedNodes.filter(n => n.type === 'scene_element' || n.type === 'camera_movement').map(n => n.text).join(' ');
     const visuals = store.analyzedNodes.filter(n => n.type === 'character_action').map(n => n.text).join(' ');
     
     store.activeSceneText = scenes || '未提取到场景要素...';
@@ -141,6 +142,7 @@ textarea:focus { outline: none; border-color: var(--brand-color); }
 }
 .node { padding: 0 4px; margin-right: 4px; border-radius: 2px; }
 .node-valid { background: transparent; color: var(--text-primary); }
+.node-camera { background: rgba(37, 99, 235, 0.1); color: var(--brand-color); border-bottom: 2px dashed var(--brand-color); }
 .node-invalid { 
     background: var(--danger-light); 
     color: var(--danger-text); 
@@ -150,6 +152,7 @@ textarea:focus { outline: none; border-color: var(--brand-color); }
 
 .legend { display: flex; gap: 16px; font-size: 0.8rem; }
 .legend-valid { color: var(--text-muted); }
+.legend-camera { color: var(--brand-color); }
 .legend-invalid { color: var(--danger-text); }
 
 .btn-push {
