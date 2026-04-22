@@ -22,6 +22,7 @@ Types allowed:
 - 'dialogue': Spoken words and lines said out loud by characters on screen.
 - 'narration': Voiceovers or character inner monologues (invisible thoughts).
 - 'cut_instruction': Pure editing notes like 'Cut to black', 'Fade out', 'Transition'.
+- 'shot_divider': Explicit marker for scene/shot numbers like '12-1', '12-2', '场 1-1'. You MUST preserve these markers exactly as they appear to maintain structural boundaries.
 
 CRITICAL: Return ONLY a valid JSON Array. No markdown formatting (\`\`\`json) outside the array. No chat.
 SUPER CRITICAL TO PREVENT CUTOFF: You MUST output the JSON in a completely MINIFIED format (no newlines, no indentation) to save tokens.
@@ -95,7 +96,16 @@ CRITICAL RULES:
    - If characters speak, describe them as "fluently speaking [Original Language], expressive mouth open matching [Original Language] pronunciation".
    - Do NOT translate dialogue to another language. The dialogue text must remain exactly in the origin language. 
    - You MUST ensure NO subtitles are rendered ("no subtitles, no text on screen").
-   - In combinedPrompt, append the exact original script dialogue at the very end in brackets like: [Script Dialog Reference: "Original Dialogue Text matching the script"] so the user can use it for AI lip-sync generation.`;
+   - In your generated prompt, append the exact original script dialogue at the very end in brackets like: [Script Dialog Reference: "Original Dialogue Text matching the script"] so the user can use it for AI lip-sync generation.
+7. BATCH OUTPUT FORMAT & STRUCTURAL INTEGRITY (CRITICAL):
+   - If the input script contains shot markers like "12-1", "12-2", you MUST process the entire batch simultaneously.
+   - For 'combinedPrompt', you MUST output a single combined string formatted EXACTLY like this:
+12-1
+[Your unified prompt for 12-1]
+
+12-2
+[Your unified prompt for 12-2]
+   - Ensure the newline characters are properly escaped as \\n in the JSON string constraint.`;
 
         let userContent = `Convert to optimized prompts.\n`;
         if (memoryContext) {

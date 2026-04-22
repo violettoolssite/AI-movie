@@ -28,6 +28,7 @@
           </span>
         </div>
         <div class="legend">
+          <span class="legend-divider">■ 分镜编号 (批处理边界)</span>
           <span class="legend-valid">■ 有效转换词</span>
           <span class="legend-camera">■ 运镜机位</span>
           <span class="legend-dialogue">■ 台词对白</span>
@@ -63,13 +64,14 @@ const getNodeClass = (type) => {
     if (type === 'narration' || type === 'cut_instruction') return 'node-invalid';
     if (type === 'camera_movement') return 'node-camera';
     if (type === 'dialogue') return 'node-dialogue';
+    if (type === 'shot_divider') return 'node-divider';
     return 'node-valid';
 }
 
 const pushToStudio = () => {
-    // 组装纯净版
-    const scenes = store.analyzedNodes.filter(n => n.type === 'scene_element' || n.type === 'camera_movement').map(n => n.text).join(' ');
-    const visuals = store.analyzedNodes.filter(n => n.type === 'character_action' || n.type === 'dialogue').map(n => n.text).join(' ');
+    // 组装纯净版并保留分镜边界
+    const scenes = store.analyzedNodes.filter(n => n.type === 'scene_element' || n.type === 'camera_movement' || n.type === 'shot_divider').map(n => n.type === 'shot_divider' ? `\n\n[SHOT ${n.text}]\n` : n.text).join(' ');
+    const visuals = store.analyzedNodes.filter(n => n.type === 'character_action' || n.type === 'dialogue' || n.type === 'shot_divider').map(n => n.type === 'shot_divider' ? `\n\n[SHOT ${n.text}]\n` : n.text).join(' ');
     
     store.activeSceneText = scenes || '未提取到场景要素...';
     store.activeVisualText = visuals || '未提取到画面要素...';
@@ -147,6 +149,7 @@ textarea:focus { outline: none; border-color: var(--brand-color); }
 .node-valid { background: transparent; color: var(--text-primary); }
 .node-camera { background: rgba(37, 99, 235, 0.1); color: var(--brand-color); border-bottom: 2px dashed var(--brand-color); }
 .node-dialogue { background: rgba(16, 185, 129, 0.1); color: #10b981; border-bottom: 2px dashed #10b981; }
+.node-divider { background: var(--text-primary); color: #fff; padding: 4px 12px; border-radius: 4px; display: inline-block; margin: 12px 0 4px 0; font-family: var(--font-mono); font-weight: bold; width: 100%; }
 .node-invalid { 
     background: var(--danger-light); 
     color: var(--danger-text); 
@@ -154,7 +157,8 @@ textarea:focus { outline: none; border-color: var(--brand-color); }
     border-bottom: 2px dashed var(--danger-text);
 }
 
-.legend { display: flex; gap: 16px; font-size: 0.8rem; }
+.legend { display: flex; gap: 16px; font-size: 0.8rem; margin-top: 16px; }
+.legend-divider { color: var(--text-primary); font-weight: bold; }
 .legend-valid { color: var(--text-muted); }
 .legend-camera { color: var(--brand-color); }
 .legend-dialogue { color: #10b981; }
