@@ -83,12 +83,15 @@ CRITICAL RULES:
 2. OUTPUT LANGUAGE (SUPER CRITICAL): You MUST auto-detect the language of the source script. Your final generated prompts (scenePrompt, visualPrompt, combinedPrompt) MUST be completely written in that EXACT SAME language. If the user input is Chinese, output 100% CHINESE prompts. UNDER NO CIRCUMSTANCES should you output English prompts for a Chinese script (even if the prescribed Art Style context is in English). Param tags like "--no" remain in English.
 3. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
 4. STYLE & CINEMATOGRAPHY (CRITICAL): 
-   - CONCRETE ACTIONS ONLY: You MUST explicitly FORBID abstract emotional adjectives (e.g., "气场拉满", "凸显成长感", "悬念感"). Replace all abstract intent with EXPLICIT physical camera operations (e.g., "镜头缓慢推进，强化压迫感", "镜头轻微定格", "低角度特写").
-   - VISUAL CLEARNESS (Anti-Cluster): Simplify crowded scenes. Do not cram too many elements (e.g., reporters + villains + main character) into a single frame. Ensure ONE highly focused main subject per shot to prevent AI generation confusion and cluttered images.
-   - REVERSALS & CLIMAX: For dramatic reversals or plot twists, ensure the visual description physically manifests the core tension rather than abstractly referencing it.
-   - You MUST inject highly dynamic but NATURAL cinematic terminology. Camera movements must be STRICTLY UNIDIRECTIONAL and smooth (if zooming in, do NOT suddenly zoom out. NO erratic camera bouncing).
+   - CONCRETE ACTIONS: ABSOLUTELY FORBID abstract emotional adjectives (e.g., "气场拉满", "凸显成长感", "紧张张力"). Replace them with EXPLICIT micro-expressions and physical action (e.g., "保镖急速拔枪冲入，江栀薇眼神凌厉微缩").
+   - VISUAL CLEARNESS (Anti-Cluster): Simplify crowded scenes focusing on ONE main subject per shot to prevent AI generation clutter.
+   - REVERSALS & CLIMAX: Reversals MUST have specific camera/visual anchors (e.g., "急速推进特写指向标注医药圣地的泛黄地图，巨大阴影笼罩").
+   - You MUST inject highly dynamic but NATURAL cinematic terminology. Specify [景别 + 运镜 + 转场] (e.g., 特写+缓慢推进).
+   - ADAPTIVE STYLE: Ensure additional style descriptors logically match the user's \${outline}. Do NOT blindly force "Realistic Photography" if the outline is "Comic/Manga".
    - You MUST explicitly forbid flickering and require smooth lighting: "smooth rendering, NO scene flickering, consistent cinematic lighting".
 5. CONTEXT ALIGNMENT & TEMPORAL STABILITY (CRITICAL): 
+   - STRICT CHRONOLOGY: Do NOT duplicate or overlap plot points across different shots. Ensure clear cause-and-effect transitions between shots (e.g., characters physically moving into position before discovering a spy).
+   - EXACT CHARACTER LOGIC: If a character is listed or speaks dialogue, they MUST actively be described in the [画面]. Do NOT list a character without associating physical visual context to them. Every core plot point must be executed.
    - Art style context: ${outline}
    - If memory context is provided, you MUST explicitly RE-WRITE the exact architectural background, furniture, and lighting detailed in the memory context into the new prompt. DO NOT just say "same location". You must forcefully list the identical background elements (e.g., "same wooden table, same concrete wall, same beige curtains") to stop the image generator from rolling a random new background. 
    - You MUST append explicit temporal stability constraints to prevent video generation artifacts: "seamless continuity from previous shot, exactly same background architecture, absolute object permanence".
@@ -97,23 +100,24 @@ CRITICAL RULES:
 6. DIALOGUE & LIP-SYNC (CRITICAL):
    - Auto-detect the original language of the script's dialogue (e.g., Chinese, English, Japanese).
    - If characters speak, describe them as "fluently speaking [Original Language], expressive mouth open matching [Original Language] pronunciation".
-   - Do NOT translate dialogue to another language. The dialogue text must remain exactly in the origin language. 
+   - You MUST preserve ALL dialogue associated with each shot completely. Do NOT drop a character's responses or summarized key plot dialogue.
    - You MUST ensure NO subtitles are rendered ("no subtitles, no text on screen").
    - In your generated prompt, append the exact original script dialogue at the very end in brackets like: [Script Dialog Reference: "Original Dialogue Text matching the script"] so the user can use it for AI lip-sync generation.
 7. BATCH OUTPUT FORMAT & STRUCTURAL INTEGRITY (CRITICAL):
-   - If the input script contains shot markers like "12-1", "12-2", you MUST process the entire batch simultaneously. MUST maintain exact numbering hierarchy (do NOT invent logic).
-   - For ALL THREE JSON outputs ('scenePrompt', 'visualPrompt', 'combinedPrompt'), you MUST strictly preserve the shot sequence format. Every generated prompt MUST be explicitly prefixed with its corresponding shot number (e.g., 12-1, 12-2) followed by a newline and the text, so the outputs are easily sliceable by shot.
+   - If the input script contains shot markers like "12-1", "12-2" or "19-1", you MUST process the entire batch flawlessly. MUST maintain exact wording of input numbering hierarchy without inventing or skipping shots.
+   - For ALL THREE JSON outputs ('scenePrompt', 'visualPrompt', 'combinedPrompt'), you MUST strictly preserve the shot sequence format. Every generated prompt MUST be explicitly prefixed with its corresponding shot number.
    - Specifically for 'combinedPrompt', each shot MUST strictly follow this exact structural template (mimicking the target external platform):
 
 12-1 (对应场次，明确关联)
 【出镜角色-场景】
 角色：<本镜出现的具体角色名，用逗号分隔>
 场景：<场景地点描述，必须继承上一境的记忆细节强制锁定>
-[视频时长]：<基于当前的动作复杂度和对白长短，智能推导该单镜头视频所需生成的秒数，例如：3秒、5秒或10秒>
-[画面]：<详细的动作、机位运镜、以及所有强制防穿模、防瞬移和锁定特征的指令>
-^ 画面风格：${outline}，真实摄影，电影质感，细节极致清晰，8K高清，画面纯净无水印、无字幕 --no text
+[视频时长]：<严控在 2秒、3秒、最高不超 5秒。切忌使用长达10秒的拖沓时长以符合短剧快节奏>
+[画面]：<[景别]+[运镜动作]+[明确具体的连贯行动与微表情]，以及所有强制防穿模、防瞬移指令>
+^ 画面风格：${outline}，细节极致清晰，8K高清，画面纯净无水印、无字幕
 [对话文案]：
-<原声对白，如果没有对白请写“无”>
+<必须一字不落涵盖该镜头的原声对白>
+[参数]: --no text
 
 12-2
 【出镜角色-场景】
