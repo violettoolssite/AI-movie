@@ -89,7 +89,9 @@ CRITICAL RULES:
    - "杀手/东瀛特工/黑川残余" -> "身穿黑西装的神秘闯入者/商业竞争对手"
    - "卖国/毒药/绝育成分" -> "危险的未命名的化学试剂/核心商业机密"
    - "暴力制服/格斗/擒拿" -> "用手强力按住肩膀阻止/严肃且肢体刚硬的对峙/防卫式阻拦"
-   DO NOT put explicit death, geopolitics, or bombing terms in [画面]. (You MAY keep original terms perfectly intact in [对话文案] out of necessity).
+   - "匕首/短刀/利刃" -> "闪着寒光的银色短柄金属物件/手持银色工艺品"
+   - "枪/手枪/开枪" -> "黑色的手持金属仪器/指向对方的黑色防卫装置"
+   DO NOT put explicit death, geopolitics, weapons, or bombing terms in [画面]. (You MAY keep original terms perfectly intact in [对话文案] out of necessity).
 3. OUTPUT LANGUAGE (SUPER CRITICAL): You MUST auto-detect the language of the source script. Your final generated prompts (scenePrompt, visualPrompt, combinedPrompt) MUST be completely written in that EXACT SAME language. If the user input is Chinese, output 100% CHINESE prompts. UNDER NO CIRCUMSTANCES should you output English prompts for a Chinese script (even if the prescribed Art Style context is in English). Param tags like "--no" remain in English.
 4. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
 4. STYLE & CINEMATOGRAPHY (CRITICAL): 
