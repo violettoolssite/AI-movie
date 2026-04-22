@@ -5,15 +5,15 @@
       <div class="global-context">
         <span class="label">ART STYLE</span>
         <select v-model="store.artStyle" class="style-selector">
-            <option value="Classic Shounen Manga Style, bold ink lines, dynamic shading">经典少年漫 (Shounen)</option>
-            <option value="Classic Shoujo Manga Style, delicate lines, soft shading, sparkly">经典少女漫 (Shoujo)</option>
-            <option value="Modern Webtoon Style, full color, vibrant, sharp lighting">韩漫彩漫 (Modern Webtoon)</option>
-            <option value="Modern Urban Realistic Comic Style, sleek cityscapes, modern fashion, cinematic lighting">现代都市 (Modern Urban)</option>
-            <option value="Cyberpunk Comic Style, neon lighting, gritty, high contrast">赛博朋克 (Cyberpunk)</option>
-            <option value="Dark Fantasy Manga, heavy black ink, gothic, detailed hatching">暗黑奇幻 (Dark Fantasy)</option>
-            <option value="Studio Ghibli Anime Style, nostalgic, soft colors, expressive">吉卜力动画 (Ghibli Studio)</option>
-            <option value="Noir Comic Book Style, high contrast black and white, dramatic lighting">黑色侦探题材 (Noir Comic)</option>
-            <option value="Wuxia / Xianxia Manhua Style, flowing garments, ethereal, elegant">武侠仙侠 (Wuxia / Xianxia)</option>
+            <option value="经典少年漫风格，粗犷的墨线描边，强烈的动态阴影，热血漫画感">经典少年漫 (Shounen)</option>
+            <option value="经典少女漫风格，细腻柔和的线条，梦幻打光，闪闪发光">经典少女漫 (Shoujo)</option>
+            <option value="韩漫全彩条漫风格，色彩鲜艳饱和，轮廓锐利，清晰现代的打光">韩漫彩漫 (Modern Webtoon)</option>
+            <option value="现代都市写实风格，干净利落的城市夜景，现代时尚质感，电影级布光">现代都市 (Modern Urban)</option>
+            <option value="赛博朋克风格，霓虹灯光效，暗黑机械质感，高对比度">赛博朋克 (Cyberpunk)</option>
+            <option value="暗黑奇幻风格，浓重的黑色墨迹，哥特式质感，细腻的排线阴影">暗黑奇幻 (Dark Fantasy)</option>
+            <option value="吉卜力动画片风格，复古怀旧，柔和的配色，极具情感张力">吉卜力动画 (Ghibli Studio)</option>
+            <option value="黑色侦探风格，极高的高反差黑白对比，戏剧性的打光">黑色侦探题材 (Noir Comic)</option>
+            <option value="武侠仙侠国风，飘逸的衣饰，空灵的氛围，典雅的配色">武侠仙侠 (Wuxia / Xianxia)</option>
         </select>
       </div>
     </header>

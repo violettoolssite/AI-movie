@@ -1,4 +1,4 @@
-export const NO_TEXT_CONSTRAINT = "--no text, --no subtitles, --no letters, --no watermarks, --no signature";
+export const NO_TEXT_CONSTRAINT = "无文字，绝对无字幕，不包含任何外语字母或拼音，无水印";
 
 const getHeaders = () => {
     return {
@@ -92,8 +92,8 @@ CRITICAL RULES:
    - "匕首/短刀/利刃" -> "闪着寒光的银色短柄金属物件/手持银色工艺品"
    - "枪/手枪/开枪" -> "黑色的手持金属仪器/指向对方的黑色防卫装置"
    DO NOT put explicit death, geopolitics, weapons, or bombing terms in [画面]. (You MAY keep original terms perfectly intact in [对话文案] out of necessity).
-3. OUTPUT LANGUAGE (SUPER CRITICAL): You MUST auto-detect the language of the source script. Your final generated prompts (scenePrompt, visualPrompt, combinedPrompt) MUST be completely written in that EXACT SAME language. If the user input is Chinese, output 100% CHINESE prompts. UNDER NO CIRCUMSTANCES should you output English prompts for a Chinese script (even if the prescribed Art Style context is in English). Param tags like "--no" remain in English.
-4. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
+3. OUTPUT LANGUAGE (SUPER CRITICAL): You MUST auto-detect the language of the source script. Your final generated prompts MUST be completely written in that EXACT SAME language. If the user input is Chinese, output 100% CHINESE prompts. Since the target is a Chinese T2V model, DO NOT use English parameters like "--no text".
+4. ZERO TEXT RULE: Do NOT say the word "字幕" (subtitles) inside [画面] as it triggers AI to draw subtitles. Simply put it in the [负向提示词] block.
 4. STYLE & CINEMATOGRAPHY (CRITICAL): 
    - CONCRETE ACTIONS: ABSOLUTELY FORBID abstract emotional adjectives (e.g., "气场拉满", "凸显成长感", "紧张张力"). Replace them with EXPLICIT micro-expressions and physical action (e.g., "保镖急速拔枪冲入，江栀薇眼神凌厉微缩").
    - VISUAL CLEARNESS (Anti-Cluster): Simplify crowded scenes focusing on ONE main subject per shot to prevent AI generation clutter.
@@ -126,11 +126,11 @@ CRITICAL RULES:
 角色：<本镜出现的具体角色名，用逗号分隔>
 场景：<场景地点描述，必须继承上一境的记忆细节强制锁定>
 [视频时长]：<严控在 2秒、3秒、最高不超 5秒。切忌使用长达10秒的拖沓时长以符合短剧快节奏>
-[画面]：<[景别]+[运镜动作]+[明确具体的连贯行动与微表情]，以及所有强制防穿模、防瞬移指令>
-^ 画面风格：${outline}，细节极致清晰，8K高清，画面纯净无水印、无字幕
+[画面]：<[景别]+[运镜动作]+[明确具体的行动与微表情]，以及所有防穿模指令。保证主体绝对聚焦且动作连贯>
+^ 画面风格：${outline}，画面极度纯净，细节极致清晰，8K高清
+[负向提示词]：任何文字、字幕、拼音、英文字母、水印、签名、多余的杂物
 [对话文案]：
 <必须一字不落涵盖该镜头的原声对白，若无则写“无”>
-[参数]: --no text
    - Ensure the newline characters are properly escaped as \\n in the JSON string constraint.`;
 
         let userContent = `Convert to optimized prompts.\n`;
@@ -165,9 +165,9 @@ CRITICAL RULES:
         const parsed = JSON.parse(match[0]);
         
         return {
-            scenePrompt: parsed.scenePrompt ? (parsed.scenePrompt.includes('--no text') ? parsed.scenePrompt : parsed.scenePrompt + ` ${NO_TEXT_CONSTRAINT}`) : '',
-            visualPrompt: parsed.visualPrompt ? (parsed.visualPrompt.includes('--no text') ? parsed.visualPrompt : parsed.visualPrompt + ` ${NO_TEXT_CONSTRAINT}`) : '',
-            combinedPrompt: parsed.combinedPrompt ? (parsed.combinedPrompt.includes('--no text') ? parsed.combinedPrompt : parsed.combinedPrompt + ` ${NO_TEXT_CONSTRAINT}`) : ''
+            scenePrompt: parsed.scenePrompt || '',
+            visualPrompt: parsed.visualPrompt || '',
+            combinedPrompt: parsed.combinedPrompt || ''
         };
     }
 };
