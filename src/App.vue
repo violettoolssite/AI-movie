@@ -25,7 +25,7 @@
             <option value="经典少年漫风格，粗犷的墨线描边，强烈的动态阴影，热血漫画感">经典少年漫 (Shounen)</option>
             <option value="经典少女漫风格，细腻柔和的线条，梦幻打光，闪闪发光">经典少女漫 (Shoujo)</option>
             <option value="韩漫全彩条漫风格，色彩鲜艳饱和，轮廓锐利，清晰现代的打光">韩漫彩漫 (Modern Webtoon)</option>
-            <option value="现代都市写实风格，干净利落的城市夜景，现代时尚质感，电影级布光">现代都市 (Modern Urban)</option>
+            <option value="现代都市真人写实风格，真实演员，真实皮肤毛孔纹理，电影摄影机镜头效果，城市实景拍摄，电影级布光，非动漫非卡通非插画">现代都市 (Modern Urban)</option>
             <option value="赛博朋克风格，霓虹灯光效，暗黑机械质感，高对比度">赛博朋克 (Cyberpunk)</option>
             <option value="暗黑奇幻风格，浓重的黑色墨迹，哥特式质感，细腻的排线阴影">暗黑奇幻 (Dark Fantasy)</option>
             <option value="吉卜力动画片风格，复古怀旧，柔和的配色，极具情感张力">吉卜力动画 (Ghibli Studio)</option>

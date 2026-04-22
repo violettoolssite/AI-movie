@@ -113,9 +113,9 @@ Example Output format:
 角色：<本镜出现的具体角色名，用逗号分隔>
 场景：<场景地点描述，必须继承上一境的记忆细节强制锁定>
 [视频时长]：<严控在 2秒、3秒、最高不超 5秒。切忌拖沓>
-[画面]：<[景别]+[运镜动作]+[明确具体的行动与微表情]。主体绝对聚焦，动作连贯>
-^ 画面风格：${outline}，画面极度纯净，细节极致清晰，8K高清
-[负向提示词]：任何文字、字幕、拼音、英文字母、水印、签名、多余杂物
+[画面]：<[景别]+[运镜动作]+[明确具体的行动与微表情]。主体绝对聚焦，动作连贯。绝对禁止无意义的局部特写（如耳机、首饰、耳朵等非情节关键细节）。若本镜有对话，必须呈现说话人与听话人双方的面部或上身，构成双人画面。>
+^ 画面风格：${outline}，真实人物真实皮肤纹理，真实演员面部，现实场景真实摄影机拍摄效果，非动漫，非插画，非卡通，非2D，高清电影质感
+[负向提示词]：任何文字、字幕、拼音、英文字母、水印、签名、多余杂物、动漫风格、卡通风格、2D插画、手绘感
 [对话文案]：
 <必须一字不落涵盖该镜头的原声对白，若无则写"无">`;
         // ════════════════════════════════════════════════════════════════
@@ -145,10 +145,12 @@ CRITICAL RULES:
    - FEATURE LOCK: No teleporting, no morphing, no vanishing. Characters stay physically anchored.
    - ANTI-CLIPPING: Strict physical collision. No mesh intersecting. No objects breaking unnaturally.
 
-6. DIALOGUE PRESERVATION:
+6. DIALOGUE FRAMING (CRITICAL — fixes earpiece/detail close-up hallucination):
    - Preserve ALL dialogue per shot inside [对话文案]. Do NOT drop any lines.
    - Do NOT aggregate all dialogue at the end. Each shot gets its own dialogue block.
-   - Characters speaking must also be described in the visual field (e.g., "口型配合中文发音，表情生动").
+   - DIALOGUE SHOT FRAMING RULE: If the shot contains dialogue between two or more characters (one speaking TO another), you MUST compose a two-shot or over-the-shoulder shot that shows BOTH the speaker's face/upper body AND the listener reacting. ABSOLUTELY FORBID random detail close-ups (e.g., earpiece, necklace, hair, hands) during dialogue scenes — these are meaningless and destroy immersion.
+   - The speaking character's mouth movement MUST be described: "口型自然配合中文发音，面部表情生动真实。"
+   - The listener's reaction MUST also be described in the same shot: "听话人面部保持在画面右侧/左侧，神情专注地注视说话人。"
 
 7. BATCH FORMAT (CRITICAL):
    - Maintain exact shot numbering from input (e.g., 19-1, 19-2, 19-3). Do NOT invent new numbers.
