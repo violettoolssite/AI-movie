@@ -3,7 +3,24 @@
     <header class="app-header">
       <div class="logo">AI MANGA PROMPT STUDIO</div>
       <div class="global-context">
-        <span class="label">ART STYLE</span>
+        <span class="label">视频模型</span>
+        <div class="model-selector-group">
+          <button
+            class="model-btn"
+            :class="{ active: store.videoModel === 'jimeng' }"
+            @click="store.videoModel = 'jimeng'"
+          >
+            <span class="model-dot jimeng-dot"></span>即梦 2.0
+          </button>
+          <button
+            class="model-btn"
+            :class="{ active: store.videoModel === 'doubao' }"
+            @click="store.videoModel = 'doubao'"
+          >
+            <span class="model-dot doubao-dot"></span>豆包 1.5 Pro
+          </button>
+        </div>
+        <span class="label" style="margin-left:16px;">ART STYLE</span>
         <select v-model="store.artStyle" class="style-selector">
             <option value="经典少年漫风格，粗犷的墨线描边，强烈的动态阴影，热血漫画感">经典少年漫 (Shounen)</option>
             <option value="经典少女漫风格，细腻柔和的线条，梦幻打光，闪闪发光">经典少女漫 (Shoujo)</option>
@@ -76,6 +93,41 @@ import { store } from './store.js';
   color: var(--text-muted);
 }
 
+.model-selector-group {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 4px;
+}
+.model-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.18s ease;
+}
+.model-btn:hover { color: var(--text-primary); background: var(--bg-surface); }
+.model-btn.active { background: var(--brand-color); color: #fff; box-shadow: 0 2px 8px rgba(99,102,241,0.35); }
+.model-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.jimeng-dot { background: #38bdf8; }
+.doubao-dot { background: #fb923c; }
+.model-btn.active .jimeng-dot { background: #bae6fd; }
+.model-btn.active .doubao-dot { background: #fed7aa; }
+
 .style-selector {
   background-color: var(--bg-surface);
   color: var(--text-primary);
@@ -84,7 +136,7 @@ import { store } from './store.js';
   border-radius: 8px;
   font-size: 0.9rem;
   font-family: var(--font-sans);
-  min-width: 280px;
+  min-width: 240px;
 }
 .style-selector:focus { border-color: var(--brand-color); outline: none; }
 

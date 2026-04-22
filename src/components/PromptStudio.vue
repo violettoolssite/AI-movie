@@ -88,7 +88,8 @@ const handleGenerate = async () => {
             store.artStyle, 
             store.activeSceneText, 
             store.activeVisualText, 
-            store.memoryContextString
+            store.memoryContextString,
+            store.videoModel
         );
         scenePromptOutput.value = result.scenePrompt;
         visualPromptOutput.value = result.visualPrompt;
