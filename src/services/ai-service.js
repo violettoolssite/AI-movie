@@ -99,7 +99,8 @@ CRITICAL RULES:
    - In your generated prompt, append the exact original script dialogue at the very end in brackets like: [Script Dialog Reference: "Original Dialogue Text matching the script"] so the user can use it for AI lip-sync generation.
 7. BATCH OUTPUT FORMAT & STRUCTURAL INTEGRITY (CRITICAL):
    - If the input script contains shot markers like "12-1", "12-2", you MUST process the entire batch simultaneously.
-   - For 'combinedPrompt', you MUST output a single combined string. Each shot MUST strictly follow this exact structural template (mimicking the target external platform):
+   - For ALL THREE JSON outputs ('scenePrompt', 'visualPrompt', 'combinedPrompt'), you MUST strictly preserve the shot sequence format. Every generated prompt MUST be explicitly prefixed with its corresponding shot number (e.g., 12-1, 12-2) followed by a newline and the text, so the outputs are easily sliceable by shot.
+   - Specifically for 'combinedPrompt', each shot MUST strictly follow this exact structural template (mimicking the target external platform):
 
 12-1
 【出镜角色-场景】
