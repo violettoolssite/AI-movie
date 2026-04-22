@@ -187,11 +187,45 @@ ${outputTemplate}
         if (!response.ok) throw new Error("API call failed during prompt generation.");
         const data = await response.json();
         const content = data.choices[0].message.content;
-        const match = content.match(/\{[\s\S]*\}/);
-        if (!match) throw new Error("模型无法组装 JSON 格式。返回原文：" + content);
 
-        const parsed = JSON.parse(match[0]);
-        
+        // ── 自愈 JSON 解析器 ─────────────────────────────────────────────
+        // 大模型有时在 JSON 字符串值内写入原始换行符（未转义），导致直接
+        // JSON.parse() 失败。我们尝试多个修复策略，逐级降级。
+        const safeParseJSON = (raw) => {
+            // 策略1: 直接尝试
+            try { return JSON.parse(raw); } catch (_) {}
+
+            // 策略2: 将 JSON 字符串值内的裸换行/回车替换为 \n
+            // 仅替换字符串内部（在引号对之间）的换行
+            const sanitized = raw.replace(
+                /"((?:[^"\\]|\\.)*)"/gs,
+                (_, inner) => '"' + inner
+                    .replace(/\r?\n/g, '\\n')
+                    .replace(/\t/g, '\\t') + '"'
+            );
+            try { return JSON.parse(sanitized); } catch (_) {}
+
+            // 策略3: 用正则逐字段暴力提取，彻底绕开 JSON 解析
+            const extractField = (fieldName) => {
+                // 匹配 "fieldName": "..." 包括多行内容
+                const re = new RegExp(`"${fieldName}"\\s*:\\s*"([\\s\\S]*?)"\\s*(?:,\\s*"[a-zA-Z]|\\s*\\})`, '');
+                const m = raw.match(re);
+                if (m) return m[1].replace(/\\n/g, '\n');
+                return '';
+            };
+            return {
+                scenePrompt: extractField('scenePrompt'),
+                visualPrompt: extractField('visualPrompt'),
+                combinedPrompt: extractField('combinedPrompt'),
+            };
+        };
+
+        const match = content.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error("模型未返回 JSON。返回原文：" + content.slice(0, 300));
+
+        const parsed = safeParseJSON(match[0]);
+        // ────────────────────────────────────────────────────────────────
+
         return {
             scenePrompt: parsed.scenePrompt || '',
             visualPrompt: parsed.visualPrompt || '',
