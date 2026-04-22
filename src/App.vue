@@ -2,6 +2,25 @@
   <div class="app-container">
     <header class="app-header">
       <div class="logo">AI MANGA PROMPT STUDIO</div>
+
+      <!-- 模式切换 -->
+      <div class="mode-switcher">
+        <button
+          class="mode-btn"
+          :class="{ active: store.appMode === 'script' }"
+          @click="store.appMode = 'script'"
+        >
+          <span class="mode-icon">📋</span>全集剧本模式
+        </button>
+        <button
+          class="mode-btn"
+          :class="{ active: store.appMode === 'prompt' }"
+          @click="store.appMode = 'prompt'"
+        >
+          <span class="mode-icon">✏️</span>纯描述词模式
+        </button>
+      </div>
+
       <div class="global-context">
         <span class="label">视频模型</span>
         <div class="model-selector-group">
@@ -35,7 +54,8 @@
       </div>
     </header>
 
-    <main class="app-main">
+    <!-- 全集剧本模式 -->
+    <main v-if="store.appMode === 'script'" class="app-main script-layout">
       <div class="layout-left">
         <ScriptAnalyzer />
       </div>
@@ -43,12 +63,18 @@
         <PromptStudio />
       </div>
     </main>
+
+    <!-- 纯描述词模式 -->
+    <main v-else class="app-main prompt-layout">
+      <PromptOptimizer />
+    </main>
   </div>
 </template>
 
 <script setup>
 import ScriptAnalyzer from './components/ScriptAnalyzer.vue';
 import PromptStudio from './components/PromptStudio.vue';
+import PromptOptimizer from './components/PromptOptimizer.vue';
 import { store } from './store.js';
 </script>
 
@@ -66,8 +92,8 @@ import { store } from './store.js';
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
-  padding: 0 32px;
-  gap: 32px;
+  padding: 0 24px;
+  gap: 24px;
   box-shadow: var(--shadow-sm);
   z-index: 10;
 }
@@ -75,27 +101,66 @@ import { store } from './store.js';
 .logo {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   letter-spacing: -0.02em;
   color: var(--text-primary);
+  white-space: nowrap;
 }
 
+/* ── Mode Switcher ───────────────────────────────────── */
+.mode-switcher {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.83rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.mode-btn:hover { color: var(--text-primary); background: var(--bg-surface); }
+.mode-btn.active {
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(99,102,241,0.4);
+}
+.mode-icon { font-size: 0.9rem; }
+
+/* ── Global Context (right side of header) ──────────── */
 .global-context {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  justify-content: flex-end;
 }
 
 .label {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .model-selector-group {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   background: var(--bg-base);
   border: 1px solid var(--border-color);
   border-radius: 10px;
@@ -105,11 +170,11 @@ import { store } from './store.js';
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border: none;
   border-radius: 7px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-family: var(--font-sans);
   font-weight: 500;
   background: transparent;
@@ -132,26 +197,31 @@ import { store } from './store.js';
   background-color: var(--bg-surface);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-  padding: 8px 16px;
+  padding: 7px 12px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-family: var(--font-sans);
-  min-width: 240px;
+  min-width: 200px;
+  max-width: 240px;
 }
 .style-selector:focus { border-color: var(--brand-color); outline: none; }
 
+/* ── Main areas ─────────────────────────────────────── */
 .app-main {
   flex: 1;
+  overflow: hidden;
+}
+
+.script-layout {
   display: grid;
   grid-template-columns: 400px 1fr;
-  overflow: hidden;
 }
 
-.layout-left {
-  overflow: hidden;
+.prompt-layout {
+  display: flex;
 }
 
-.layout-right {
+.layout-left, .layout-right {
   overflow: hidden;
 }
 </style>

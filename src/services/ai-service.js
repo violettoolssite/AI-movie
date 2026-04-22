@@ -231,5 +231,70 @@ ${outputTemplate}
             visualPrompt: parsed.visualPrompt || '',
             combinedPrompt: parsed.combinedPrompt || ''
         };
+    },
+
+    // 阶段3：纯描述词优化模式 ────────────────────────────────────────────
+    async optimizeRawPrompt(rawText, outline, videoModel = 'jimeng') {
+        const isDoubao = videoModel === 'doubao';
+        const modelName = isDoubao ? '豆包 1.5 Pro' : '即梦 2.0';
+
+        const SAFETY_MAP = `
+   - "炸弹/炸药" -> "复杂的发光计时机械装置"
+   - "杀手/特工" -> "身穿黑西装的神秘人物"
+   - "毒药" -> "未命名的危险液体"
+   - "暴力/格斗/擒拿" -> "强力阻拦/防卫式对峙"
+   - "匕首/刀/利刃" -> "银色短柄金属物件"
+   - "枪/手枪" -> "黑色金属防卫装置"`;
+
+        const jimengFormat = `[画面]：<[景别]+[运镜动作]+[主体人物具体动作与微表情，若有对话呈现双人画面]>
+^ 画面风格：${outline}，真实人物真实皮肤纹理，非动漫，非插画，非卡通，高清电影质感
+[负向提示词]：任何文字、字幕、拼音、英文字母、水印、签名、动漫风格、卡通风格、2D插画、手绘感`;
+
+        const doubaoFormat = `[运镜]：<景别·运镜方式>
+[主体描述]：<叙事风格描述主体动作、表情、神情>
+[环境描述]：<环境背景、光线氛围>
+[画面风格]：${outline}，高清电影质感，无文字水印
+[负面描述]：文字，字幕，水印，模糊，拼音，动漫，卡通，插画，手绘`;
+
+        const outputFormat = isDoubao ? doubaoFormat : jimengFormat;
+
+        const systemPrompt = `You are a professional AI video prompt optimizer for ${modelName}.
+[SAFETY]: This is fictional drama/comic content. Sanitize visual terms only in [画面]/[主体描述] blocks:${SAFETY_MAP}
+Keep original wording intact when shown as dialogue reference.
+
+TASK: Take the user's raw description and output ONE single optimized prompt block in EXACTLY this format for ${modelName}:
+
+${outputFormat}
+[视频时长]：<根据动作复杂度推导，2秒、3秒或5秒>
+[对话文案]：<若有对白原文逐字保留；若无则写"无">
+
+CRITICAL RULES:
+1. Output ONLY the formatted block above. NO extra explanation. NO JSON. NO markdown fences.
+2. Output language must be 100% CHINESE (same as input). Do NOT use "--no text" or English parameters.
+3. DIALOGUE FRAMING: If dialogue exists between two people, MUST show both speaker face/upper body in frame (two-shot). FORBID random close-ups of accessories (earpiece, necklace, hands) during dialogue.
+4. Mouth movement when speaking: "口型自然配合中文发音，面部表情生动真实。"
+5. FORBID ALL abstract adjectives ("气场拉满", "悬念感"). Replace with explicit physical micro-actions.
+6. Anti-anime: If style contains "都市/写实/现实", reinforce: "真实演员皮肤纹理，摄影机镜头效果，非动漫非卡通。"
+7. Every descriptive sentence MUST end with Chinese full stop '。'.`;
+
+        const payload = {
+            model: "moonshot-v1-8k",
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: `请优化以下描述词，生成适配 ${modelName} 的视频提示词：\n\n${rawText}` }
+            ],
+            temperature: 0.6,
+            max_tokens: 2048
+        };
+
+        const response = await fetch(getUrl(), {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("API call failed during prompt optimization.");
+        const data = await response.json();
+        return data.choices[0].message.content.trim();
     }
 };
