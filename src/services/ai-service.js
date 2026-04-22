@@ -107,8 +107,9 @@ CRITICAL RULES:
    - If the input script contains shot markers like "12-1", "12-2" or "19-1", you MUST process the entire batch flawlessly. MUST maintain exact wording of input numbering hierarchy without inventing or skipping shots.
    - For ALL THREE JSON outputs ('scenePrompt', 'visualPrompt', 'combinedPrompt'), you MUST strictly preserve the shot sequence format. Every generated prompt MUST be explicitly prefixed with its corresponding shot number.
    - Specifically for 'combinedPrompt', each shot MUST strictly follow this exact structural template (mimicking the target external platform):
+   - You MUST NOT output any raw headers (like "【开头强钩子】") floating outside these blocks. Integrate narrative cues directly into the [画面] block.
 
-12-1 (对应场次，明确关联)
+<当前分镜的实际输入编号，绝不可写错，例如 19-1> (对应场次，明确关联)
 【出镜角色-场景】
 角色：<本镜出现的具体角色名，用逗号分隔>
 场景：<场景地点描述，必须继承上一境的记忆细节强制锁定>
@@ -116,12 +117,8 @@ CRITICAL RULES:
 [画面]：<[景别]+[运镜动作]+[明确具体的连贯行动与微表情]，以及所有强制防穿模、防瞬移指令>
 ^ 画面风格：${outline}，细节极致清晰，8K高清，画面纯净无水印、无字幕
 [对话文案]：
-<必须一字不落涵盖该镜头的原声对白>
+<必须一字不落涵盖该镜头的原声对白，若无则写“无”>
 [参数]: --no text
-
-12-2
-【出镜角色-场景】
-...
    - Ensure the newline characters are properly escaped as \\n in the JSON string constraint.`;
 
         let userContent = `Convert to optimized prompts.\n`;
