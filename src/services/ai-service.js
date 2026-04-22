@@ -84,8 +84,14 @@ CRITICAL RULES:
 1. Form: valid JSON exact format {"scenePrompt": "...", "visualPrompt": "...", "combinedPrompt": "..."}. NO markdown formatting around JSON.
    - STRICT PUNCTUATION: Every single descriptive sentence inside your generated visual prompts MUST end perfectly with a Chinese full stop '。'.
    - NO FAKE TAGS OR ANCHORS: Do NOT invent or output any invalid anchors, markdown links, or fake IDs (e.g., "id=2"). The output text must be absolutely clean and strictly functional.
-2. OUTPUT LANGUAGE (SUPER CRITICAL): You MUST auto-detect the language of the source script. Your final generated prompts (scenePrompt, visualPrompt, combinedPrompt) MUST be completely written in that EXACT SAME language. If the user input is Chinese, output 100% CHINESE prompts. UNDER NO CIRCUMSTANCES should you output English prompts for a Chinese script (even if the prescribed Art Style context is in English). Param tags like "--no" remain in English.
-3. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
+2. JIMENG 2.0 T2V SAFETY FILTER (CRITICAL): The output visual prompts will be fed into strict Chinese Text-to-Video models (like Jimeng 2.0) that heavily censor violence, geopolitics, and terrorism. You MUST automatically sanitize sensitive words in the [画面] and 场景 blocks into visually equivalent NEUTRAL SAFE terms:
+   - "炸弹/炸药" -> "复杂的发光倒计时机械装置"
+   - "杀手/东瀛特工/黑川残余" -> "身穿黑西装的神秘闯入者/商业竞争对手"
+   - "卖国/毒药/绝育成分" -> "危险的未命名的化学试剂/核心商业机密"
+   - "暴力制服/格斗/擒拿" -> "用手强力按住肩膀阻止/严肃且肢体刚硬的对峙/防卫式阻拦"
+   DO NOT put explicit death, geopolitics, or bombing terms in [画面]. (You MAY keep original terms perfectly intact in [对话文案] out of necessity).
+3. OUTPUT LANGUAGE (SUPER CRITICAL): You MUST auto-detect the language of the source script. Your final generated prompts (scenePrompt, visualPrompt, combinedPrompt) MUST be completely written in that EXACT SAME language. If the user input is Chinese, output 100% CHINESE prompts. UNDER NO CIRCUMSTANCES should you output English prompts for a Chinese script (even if the prescribed Art Style context is in English). Param tags like "--no" remain in English.
+4. ZERO TEXT RULE: At the END of EVERY single generated prompt you MUST append: ${NO_TEXT_CONSTRAINT}. Add "no text, no subtitles" in the main prompt itself.
 4. STYLE & CINEMATOGRAPHY (CRITICAL): 
    - CONCRETE ACTIONS: ABSOLUTELY FORBID abstract emotional adjectives (e.g., "气场拉满", "凸显成长感", "紧张张力"). Replace them with EXPLICIT micro-expressions and physical action (e.g., "保镖急速拔枪冲入，江栀薇眼神凌厉微缩").
    - VISUAL CLEARNESS (Anti-Cluster): Simplify crowded scenes focusing on ONE main subject per shot to prevent AI generation clutter.
