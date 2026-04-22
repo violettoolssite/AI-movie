@@ -24,6 +24,7 @@ Types allowed:
 - 'cut_instruction': Pure editing notes like 'Cut to black', 'Fade out', 'Transition'.
 
 CRITICAL: Return ONLY a valid JSON Array. No markdown formatting (\`\`\`json) outside the array. No chat.
+SUPER CRITICAL TO PREVENT CUTOFF: You MUST output the JSON in a completely MINIFIED format (no newlines, no indentation) to save tokens.
 Example Output format:
 [
   { "type": "scene_element", "text": "Inside an abandoned warehouse, dust moats float in the sunlight." },
@@ -39,7 +40,8 @@ Example Output format:
                 { role: "system", content: systemPrompt },
                 { role: "user", content: `Here is the episode script:\n\n${scriptText}` }
             ],
-            temperature: 0.1
+            temperature: 0.1,
+            max_tokens: 4096
         };
 
         const response = await fetch(getUrl(), {
@@ -53,8 +55,19 @@ Example Output format:
         const data = await response.json();
         const content = data.choices[0].message.content;
         const match = content.match(/\[[\s\S]*\]/);
-        if (!match) throw new Error("模型返回的并不是标准的 JSON格式。原文输出：" + content);
-        return JSON.parse(match[0]);
+        if (!match) {
+            // Attempt to force fix truncation blindly
+            try {
+                return JSON.parse(content + ']');
+            } catch(e) {
+                throw new Error("大模型单次生成突破了长度极限导致末尾被截断，并且无法自行闭合 JSON。原文输出最后几行：" + content.slice(-200));
+            }
+        }
+        try {
+            return JSON.parse(match[0]);
+        } catch(e) {
+            throw new Error("大模型生成的 JSON 中存在转义等语法错误：" + e.message + "，原文：" + match[0].slice(-200));
+        }
     },
 
     // 阶段2：生成画面提示词
@@ -97,7 +110,8 @@ CRITICAL RULES:
                 { role: "system", content: systemPrompt },
                 { role: "user", content: userContent }
             ],
-            temperature: 0.7
+            temperature: 0.7,
+            max_tokens: 4096
         };
 
         const response = await fetch(getUrl(), {
