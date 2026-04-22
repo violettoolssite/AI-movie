@@ -7,7 +7,7 @@
     <div class="content">
       <textarea 
         v-model="scriptInput" 
-        placeholder="请在此粘贴单集剧本（禁止丢入全集，字数建议不超过3000字）。AI将自动解构出可用实体并隔离旁白/指导..."
+        placeholder="☑请输入：【文案】或【剧本】&#10;&#10;①文案：任何文案&#10;②自定义分镜格式：&#10;1-1&#10;xxxxx文案&#10;1-2&#10;xxxxx文案&#10;1-3&#10;xxxxx文案"
         :disabled="isAnalyzing"
       ></textarea>
       
