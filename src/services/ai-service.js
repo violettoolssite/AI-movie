@@ -102,14 +102,14 @@ CRITICAL RULES:
    - If characters speak, describe them as "fluently speaking [Original Language], expressive mouth open matching [Original Language] pronunciation".
    - You MUST preserve ALL dialogue associated with each shot completely. Do NOT drop a character's responses or summarized key plot dialogue.
    - You MUST ensure NO subtitles are rendered ("no subtitles, no text on screen").
-   - In your generated prompt, append the exact original script dialogue at the very end in brackets like: [Script Dialog Reference: "Original Dialogue Text matching the script"] so the user can use it for AI lip-sync generation.
+   - DO NOT put the Script Dialog Reference at the very end of the file. Directly place all dialogue text inside the "[对话文案]：" tag for EACH shot respectively.
 7. BATCH OUTPUT FORMAT & STRUCTURAL INTEGRITY (CRITICAL):
    - If the input script contains shot markers like "12-1", "12-2" or "19-1", you MUST process the entire batch flawlessly. MUST maintain exact wording of input numbering hierarchy without inventing or skipping shots.
    - For ALL THREE JSON outputs ('scenePrompt', 'visualPrompt', 'combinedPrompt'), you MUST strictly preserve the shot sequence format. Every generated prompt MUST be explicitly prefixed with its corresponding shot number.
-   - Specifically for 'combinedPrompt', each shot MUST strictly follow this exact structural template (mimicking the target external platform):
+   - Specifically for 'combinedPrompt', each shot MUST strictly follow this exact structural template. YOU MUST LITERALLY PRINT EVERY SINGLE FIELD TAG (e.g., "【出镜角色-场景】", "角色：", "场景：", "[视频时长]：", "[画面]：", "^ 画面风格：", "[对话文案]：", "[参数]:"). DO NOT SKIP ANY OF THEM!
    - You MUST NOT output any raw headers (like "【开头强钩子】") floating outside these blocks. Integrate narrative cues directly into the [画面] block.
 
-<当前分镜的实际输入编号，绝不可写错，例如 19-1> (对应场次，明确关联)
+绝不可写错当前分镜编号，例如填写：19-1 (对应场次)
 【出镜角色-场景】
 角色：<本镜出现的具体角色名，用逗号分隔>
 场景：<场景地点描述，必须继承上一境的记忆细节强制锁定>
