@@ -103,7 +103,11 @@ const handleGenerate = async () => {
 }
 
 const handleNextFrame = () => {
-    store.memoryContextString = `Scene: ${store.activeSceneText} | Visual: ${store.activeVisualText}`;
+    // Use the explicitly generated detailed prompt as memory for airtight background consistency
+    store.memoryContextString = combinedPromptOutput.value && !combinedPromptOutput.value.includes('STANDBY') 
+        ? combinedPromptOutput.value 
+        : `Scene: ${store.activeSceneText} | Visual: ${store.activeVisualText}`;
+        
     store.currentSceneNumber++;
 
     store.activeSceneText = '';
