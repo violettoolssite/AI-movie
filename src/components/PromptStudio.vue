@@ -119,8 +119,9 @@ const handleNextFrame = () => {
 }
 
 const copyToClipboard = (text, e) => {
-    if (!text || text.includes('STANDBY') || text.includes('PROCESSING')) return;
-    navigator.clipboard.writeText(text).then(() => {
+    const str = text != null ? String(text) : '';
+    if (!str || str.includes('STANDBY') || str.includes('PROCESSING')) return;
+    navigator.clipboard.writeText(str).then(() => {
         const btn = e.target;
         const oText = btn.innerText;
         btn.innerText = 'COPIED';

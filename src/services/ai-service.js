@@ -227,9 +227,9 @@ ${outputTemplate}
         // ────────────────────────────────────────────────────────────────
 
         return {
-            scenePrompt: parsed.scenePrompt || '',
-            visualPrompt: parsed.visualPrompt || '',
-            combinedPrompt: parsed.combinedPrompt || ''
+            scenePrompt: String(parsed.scenePrompt || ''),
+            visualPrompt: String(parsed.visualPrompt || ''),
+            combinedPrompt: String(parsed.combinedPrompt || '')
         };
     },
 
